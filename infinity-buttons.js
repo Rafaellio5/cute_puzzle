@@ -1,33 +1,7 @@
-<div id="infinity-container" style="position: relative; width: 600px; height: 400px; background: #222; border-radius: 12px; overflow: hidden;">
-  <div id="message" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 24px; display: none;"></div>
-</div>
-
-<style>
-  .inf-btn {
-    position: absolute;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    border: none;
-    background-color: #ff4444;
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background 0.3s;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  .inf-btn.disabled {
-    background-color: #888;
-    cursor: default;
-  }
-</style>
-
-<script>
 const container = document.getElementById('infinity-container');
 const message = document.getElementById('message');
 
+// создаем canvas
 const canvas = document.createElement('canvas');
 canvas.width = container.offsetWidth;
 canvas.height = container.offsetHeight;
@@ -47,33 +21,51 @@ const a = 120; // масштаб Лемнискаты
 const centerX = container.offsetWidth / 2;
 const centerY = container.offsetHeight / 2;
 
-// координаты по Лемнискате Бернулли
+// создаем координаты по Лемнискате Бернулли
 for (let i = 0; i < N; i++) {
   const t = (i / N) * 2 * Math.PI;
-  const denom = 1 + Math.sin(t) * Math.sin(t);
+  const denom = 1 + Math.sin(t) ** 2;
   const x = a * Math.cos(t) / denom;
   const y = a * Math.sin(t) * Math.cos(t) / denom;
-  coords.push({x: centerX + x - 20, y: centerY + y - 20}); // центр кнопки
+  coords.push({ x: centerX + x - 20, y: centerY + y - 20 }); // -20 для центрирования кнопки
 }
 
 let currentStep = 0;
 
+// создаем кнопки
 coords.forEach((pos, index) => {
   const btn = document.createElement('button');
   btn.classList.add('inf-btn');
+  btn.style.position = 'absolute';
+  btn.style.width = '40px';
+  btn.style.height = '40px';
+  btn.style.borderRadius = '50%';
+  btn.style.border = 'none';
+  btn.style.backgroundColor = '#ff4444';
+  btn.style.color = 'white';
+  btn.style.fontWeight = 'bold';
+  btn.style.cursor = 'pointer';
   btn.style.left = pos.x + 'px';
   btn.style.top = pos.y + 'px';
+  btn.style.display = 'flex';
+  btn.style.justifyContent = 'center';
+  btn.style.alignItems = 'center';
   btn.textContent = index + 1;
-  if (index !== 0) btn.classList.add('disabled'); // только первая активна
+
+  if (index !== 0) {
+    btn.disabled = true;
+    btn.style.backgroundColor = '#888';
+  }
 
   btn.addEventListener('click', () => {
     if (index !== currentStep) return;
     btn.style.backgroundColor = '#00c851';
-    btn.classList.remove('disabled');
+    btn.disabled = true;
     currentStep++;
 
     if (currentStep < N) {
-      buttons[currentStep].classList.remove('disabled');
+      buttons[currentStep].disabled = false;
+      buttons[currentStep].style.backgroundColor = '#ff4444';
       drawLine(index, currentStep);
     } else {
       drawFullInfinity();
@@ -88,6 +80,7 @@ coords.forEach((pos, index) => {
   buttons.push(btn);
 });
 
+// функция рисования линии между кнопками
 function drawLine(fromIndex, toIndex) {
   const from = coords[fromIndex];
   const to = coords[toIndex];
@@ -97,6 +90,7 @@ function drawLine(fromIndex, toIndex) {
   ctx.stroke();
 }
 
+// функция нарисовать весь символ ∞
 function drawFullInfinity() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.beginPath();
@@ -106,4 +100,3 @@ function drawFullInfinity() {
   }
   ctx.stroke();
 }
-</script>
