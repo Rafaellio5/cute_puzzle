@@ -15,7 +15,7 @@ body, html {
   z-index: 1;
   max-width: 480px;
   margin: 0 auto;
-  padding: 20px 10px;
+  padding: 20px 10px 60px; /* отступ снизу для кнопки */
   text-align: center;
 }
 
@@ -34,8 +34,17 @@ body, html {
   position: relative;
 }
 
+/* Пазл кусочек */
+.puzzle-piece {
+  border-radius: 10px;
+  cursor: grab;
+  position: absolute;
+}
+
 /* Кнопка */
 button {
+  position: relative;
+  bottom: 0;
   margin-top: 20px;
   padding: 10px 25px;
   font-size: 1rem;
