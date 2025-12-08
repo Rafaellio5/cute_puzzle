@@ -1,15 +1,6 @@
 const container = document.getElementById('infinity-container');
 const message = document.getElementById('message');
 
-// координаты кнопок для формы бесконечности
-const coords = [
-  {x: 50, y: 120}, {x: 90, y: 50}, {x: 150, y: 30}, {x: 210, y: 50}, {x: 250, y: 120},
-  {x: 210, y: 190}, {x: 150, y: 210}, {x: 90, y: 190}, {x: 50, y: 120}
-];
-
-let currentStep = 0;
-let buttons = [];
-
 const canvas = document.createElement('canvas');
 canvas.width = container.offsetWidth;
 canvas.height = container.offsetHeight;
@@ -21,14 +12,31 @@ const ctx = canvas.getContext('2d');
 ctx.strokeStyle = 'white';
 ctx.lineWidth = 3;
 
-// создаём кнопки
+const N = 12; // количество кнопок
+const buttons = [];
+const coords = [];
+const a = 120; // масштаб
+
+// центр контейнера
+const centerX = container.offsetWidth / 2;
+const centerY = container.offsetHeight / 2;
+
+for (let i = 0; i < N; i++) {
+  const t = (i / N) * 2 * Math.PI;
+  const x = a * Math.cos(t) / (1 + Math.sin(t) * Math.sin(t));
+  const y = a * Math.sin(t) * Math.cos(t) / (1 + Math.sin(t) * Math.sin(t));
+  coords.push({x: centerX + x - 20, y: centerY + y - 20}); // -20 чтобы центр кнопки совпадал
+}
+
+let currentStep = 0;
+
 coords.forEach((pos, index) => {
   const btn = document.createElement('button');
   btn.classList.add('inf-btn');
   btn.style.left = pos.x + 'px';
   btn.style.top = pos.y + 'px';
   btn.textContent = index + 1;
-  if (index !== 0) btn.classList.add('disabled');
+  if (index !== 0) btn.classList.add('disabled'); // только кнопка 1 активна
 
   btn.addEventListener('click', () => {
     if (index !== currentStep) return;
@@ -36,14 +44,13 @@ coords.forEach((pos, index) => {
     btn.classList.remove('disabled');
     currentStep++;
 
-    if (currentStep < coords.length) {
+    if (currentStep < N) {
       buttons[currentStep].classList.remove('disabled');
       drawLine(index, currentStep);
     } else {
       drawFullInfinity();
-      // через 2 секунды появляется текстовое сообщение
       setTimeout(() => {
-        message.textContent = "Вот здесь ты можешь написать свой текст ❤️";
+        message.textContent = "Здесь появится ваш текст ❤️";
         message.style.display = 'block';
       }, 2000);
     }
