@@ -1,68 +1,44 @@
 body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background-color: #ffe6f0;
     margin: 0;
-    font-family: "Arial", sans-serif;
-    background: #fff7f8;
-    color: #333;
+    padding: 20px;
 }
 
-.center {
-    text-align: center;
-    margin-top: 40px;
+h1 {
+    margin-bottom: 20px;
 }
 
-button {
-    padding: 12px 28px;
-    font-size: 18px;
-    border: none;
-    border-radius: 10px;
-    background: #ff7ea8;
-    color: white;
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-button:hover {
-    background: #ff548c;
-}
-
-canvas {
-    border: 2px solid #ff7ea8;
-    border-radius: 10px;
+#puzzle-container {
+    display: inline-block;
+    position: relative;
+    width: 200px;
+    height: 200px;
     margin-top: 20px;
-    max-width: 95%;
 }
 
-/* --- романтическая финальная страница --- */
-
-.romantic-container {
-    text-align: center;
-    margin-top: 40px;
-    animation: fadeIn 2s ease;
+.puzzle-piece {
+    width: 50px;  /* размер части */
+    height: 50px;
+    position: absolute;
+    cursor: grab;
+    border: 1px solid #fff;
+    box-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+    background-image: url('heart.jpg');
+    background-size: 200px 200px;
 }
 
-.romantic-text {
-    font-size: 36px;
-    color: #ff4c85;
-    animation: float 3s ease-in-out infinite;
+#message-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80vh;
+    padding: 20px;
 }
 
-.romantic-sub {
-    font-size: 22px;
-    margin-top: 20px;
+#animated-message {
+    font-size: 24px;
+    max-width: 600px;
     line-height: 1.5;
-    color: #555;
-    animation: fadeIn 3s ease;
-}
-
-/* мягкое появление */
-@keyframes fadeIn {
-    from {opacity: 0;}
-    to {opacity: 1;}
-}
-
-/* романтичное “покачивание” текста */
-@keyframes float {
-    0% {transform: translateY(0px);}
-    50% {transform: translateY(-8px);}
-    100% {transform: translateY(0px);}
 }
