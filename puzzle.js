@@ -14,7 +14,7 @@ let selectedPiece = null;
 
 // Загружаем картинку пазла
 const img = new Image();
-img.src = "heart.jpg"; // твоя картинка
+img.src = "./heart.jpg"; // указывает явно, что картинка в той же папке, что index.html
 img.onload = () => {
     initPuzzle();
     drawPuzzle();
