@@ -1,9 +1,6 @@
 const canvas = document.getElementById("puzzleCanvas");
 const ctx = canvas.getContext("2d");
 
-canvas.width = 600;
-canvas.height = 600;
-
 const rows = 3;
 const cols = 3;
 const pieceSize = canvas.width / cols;
@@ -12,14 +9,18 @@ const snapTolerance = 20;
 let pieces = [];
 let selectedPiece = null;
 
-// Загружаем картинку пазла
 const img = new Image();
-img.src = "./heart.jpg"; // указывает явно, что картинка в той же папке, что index.html
+img.src = "./heart.jpg"; // картинка в той же папке
 img.onload = () => {
     initPuzzle();
-    drawPuzzle();
+    requestAnimationFrame(drawPuzzle);
 };
 
+img.onerror = () => {
+    console.error("Не удалось загрузить heart.jpg. Проверь путь и расширение.");
+};
+
+// Создание кусочков
 function initPuzzle() {
     pieces = [];
     for (let y = 0; y < rows; y++) {
@@ -36,13 +37,13 @@ function initPuzzle() {
     }
 }
 
+// Рисуем пазл
 function drawPuzzle() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    pieces.sort((a, b) => a.z - b.z);
+    pieces.sort((a,b)=>a.z - b.z);
 
-    pieces.forEach(p => {
-        ctx.globalAlpha = 1;
+    for (let p of pieces) {
         ctx.drawImage(
             img,
             p.correctX, p.correctY, pieceSize, pieceSize,
@@ -51,12 +52,12 @@ function drawPuzzle() {
         ctx.strokeStyle = "#fff";
         ctx.lineWidth = 2;
         ctx.strokeRect(p.x, p.y, pieceSize, pieceSize);
-    });
+    }
 
     requestAnimationFrame(drawPuzzle);
 }
 
-// Pointer events для ПК и мобильных
+// Pointer events (ПК + мобильные)
 canvas.addEventListener("pointerdown", e => {
     const rect = canvas.getBoundingClientRect();
     const mx = e.clientX - rect.left;
@@ -68,15 +69,12 @@ canvas.addEventListener("pointerdown", e => {
         if (!p.locked &&
             mx >= p.x && mx <= p.x + pieceSize &&
             my >= p.y && my <= p.y + pieceSize
-        ) {
-            clicked = p;
-            break;
-        }
+        ) { clicked = p; break; }
     }
 
     if (clicked) {
         selectedPiece = clicked;
-        selectedPiece.z = Math.max(...pieces.map(p => p.z)) + 1;
+        selectedPiece.z = Math.max(...pieces.map(p=>p.z)) + 1;
         selectedPiece.offsetX = mx - selectedPiece.x;
         selectedPiece.offsetY = my - selectedPiece.y;
         canvas.setPointerCapture(e.pointerId);
@@ -92,6 +90,7 @@ canvas.addEventListener("pointermove", e => {
     selectedPiece.x = mx - selectedPiece.offsetX;
     selectedPiece.y = my - selectedPiece.offsetY;
 
+    // ограничение по canvas
     selectedPiece.x = Math.max(0, Math.min(selectedPiece.x, canvas.width - pieceSize));
     selectedPiece.y = Math.max(0, Math.min(selectedPiece.y, canvas.height - pieceSize));
 });
@@ -99,10 +98,9 @@ canvas.addEventListener("pointermove", e => {
 canvas.addEventListener("pointerup", e => {
     if (!selectedPiece) return;
 
-    if (
-        Math.abs(selectedPiece.x - selectedPiece.correctX) < snapTolerance &&
-        Math.abs(selectedPiece.y - selectedPiece.correctY) < snapTolerance
-    ) {
+    if (Math.abs(selectedPiece.x - selectedPiece.correctX) < snapTolerance &&
+        Math.abs(selectedPiece.y - selectedPiece.correctY) < snapTolerance) {
+
         selectedPiece.x = selectedPiece.correctX;
         selectedPiece.y = selectedPiece.correctY;
         selectedPiece.locked = true;
@@ -113,29 +111,27 @@ canvas.addEventListener("pointerup", e => {
     checkComplete();
 });
 
+// Проверка завершения
 function checkComplete() {
-    if (pieces.every(p => p.locked)) {
-        setTimeout(() => {
-            window.location.href = "message.html";
-        }, 500);
+    if (pieces.every(p=>p.locked)) {
+        setTimeout(()=>{ window.location.href = "message.html"; }, 500);
     }
 }
 
-// -------------------------
 // Летающие сердечки
 function spawnHearts() {
     const container = document.getElementById('hearts');
     if (!container) return;
 
-    setInterval(() => {
+    setInterval(()=>{
         const heart = document.createElement('div');
         heart.classList.add('heart');
         heart.textContent = '❤';
         heart.style.left = Math.random() * 100 + '%';
-        heart.style.fontSize = (15 + Math.random() * 25) + 'px';
-        heart.style.animationDuration = (4 + Math.random() * 4) + 's';
+        heart.style.fontSize = (15 + Math.random()*25) + 'px';
+        heart.style.animationDuration = (4 + Math.random()*4) + 's';
         container.appendChild(heart);
-        setTimeout(() => heart.remove(), 7000);
+        setTimeout(()=>heart.remove(),7000);
     }, 600);
 }
 spawnHearts();
